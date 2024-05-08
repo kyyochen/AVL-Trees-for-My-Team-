@@ -1,5 +1,4 @@
 #include "roster_metrics.h"
-
 using namespace std;
 
 roster_metrics::roster_metrics() {
@@ -14,8 +13,7 @@ void roster_metrics::record(int game, int player, int points) {
     //record tree by game
     
     //check if game exists
-    AVLTreeNode* gameNode = new AVLTreeNode();
-    //AVLTreeNode* gameNode = gameTree.search(game);
+    AVLTreeNode* gameNode = gameTree.search(game);
     if (gameNode == nullptr) {
         // If the game node doesn't exist, create a new one
         gameNode = new AVLTreeNode();
@@ -55,8 +53,7 @@ void roster_metrics::clear(int game, int player) {
     //find game node g in game tree
     //go to player tree
     //ClearTree (AVLTreeNode *n)
-    //AVLTreeNode *gameNode = gameTree.search(game);
-    AVLTreeNode *gameNode = new AVLTreeNode();
+    AVLTreeNode *gameNode = gameTree.search(game);
     if (gameNode != nullptr) {
         
         //delete player from game if player exists and played
@@ -77,18 +74,31 @@ void roster_metrics::clear(int game, int player) {
 
 // accessor functions
 //ranked receiver(k) | return the jersey with the kth highest performance
-int roster_metrics::ranked_receiver(int rank) {
     //look at performance tree
     // Traverse to rightmost node
     //go back k-1 steps and return the player at that node
     //recursively call successor until end, then recrusively call predecessor k-1 times
-    AVLTreeNode *recursiveCaller (AVLTreeNode *x) {
-        while ((x->left != nullptr) && (x->right != nullptr)) {
-            recursiveCaller(performanceTree.)
-        }
-        return x;
+
+int roster_metrics::ranked_receiver(int rank) {
+    // go to rightmost point
+    AVLTreeNode* current = performanceTree.getRoot();
+    while (current != nullptr && current->right != nullptr) {
+        current = current->right;
     }
 
-    AVLTreeNode *currentNode = new AVLTreeNode();
+    // go back k-1 positions
+    for (int i = 0; i < rank - 1 && current != nullptr; ++i) {
+        int predecessorKey = performanceTree.Predecessor(current->key);
+        if (predecessorKey == -1) {
+            return -1; // rank not found
+        }
+        current = performanceTree.search(predecessorKey);
+    }
 
+    // return player
+    if (current != nullptr) {
+        return current->secondValue;
+    } else {
+        return -1; // rank not found
+    }
 }
