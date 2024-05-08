@@ -18,8 +18,9 @@ struct AVLTreeNode
 class AVL_Tree
 {
    private:
-      AVLTreeNode   *root;
-
+      AVLTreeNode* root;
+      void ClearTree(AVLTreeNode *n);
+      void Print(AVLTreeNode *n);
    public:
       AVL_Tree();            // Constructor
       ~AVL_Tree();           // Destructor
@@ -37,10 +38,10 @@ class AVL_Tree
       int Successor(int key);
       void Delete(int key);
       AVLTreeNode* search(int key);
+      AVLTreeNode* getRoot() const;
+      AVLTreeNode* findMax(AVLTreeNode* node);
 
-   private:
-      void ClearTree(AVLTreeNode *n);
-      void Print(AVLTreeNode *n);
+
 };
 
 #endif
