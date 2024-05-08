@@ -329,7 +329,114 @@ void AVL_Tree::Print(AVLTreeNode *n)
          cout<<"\t right subtree is empty\n";
       }
    }
-   AVLTreeNode* search(int key) {
-      
-   }
+   
+}
+
+
+// Predecessor
+int AVL_Tree::Predecessor(int key) {
+    AVLTreeNode* node = search(key);
+    if (node == nullptr || node->left == nullptr) {
+        return -1; // Key not found or no predecessor
+    }
+    node = node->left;
+    while (node->right != nullptr) {
+        node = node->right;
+    }
+    return node->key;
+}
+
+// Successor
+int AVL_Tree::Successor(int key) {
+    AVLTreeNode* node = search(key);
+    if (node == nullptr || node->right == nullptr) {
+        return -1; // Key not found or no successor
+    }
+    node = node->right;
+    while (node->left != nullptr) {
+        node = node->left;
+    }
+    return node->key;
+}
+
+// search
+AVLTreeNode* AVL_Tree::search(int key) {
+    AVLTreeNode* current = root;
+    while (current != nullptr) {
+        if (key < current->key) {
+            current = current->left;
+        } else if (key > current->key) {
+            current = current->right;
+        } else {
+            return current; // Key found
+        }
+    }
+    return nullptr; // Key not found
+}
+
+AVLTreeNode* AVL_Tree::getRoot() const {
+    return root;
+}
+
+void AVL_Tree::Delete(int key) {
+    AVLTreeNode* nodeToDelete = search(key);
+    if (nodeToDelete == nullptr) {
+        return; // if node dne
+    }
+
+    // If no children
+    if (nodeToDelete->left == nullptr && nodeToDelete->right == nullptr) {
+        if (nodeToDelete->parent == nullptr) { // node = root
+            root = nullptr;
+        } else {
+            if (nodeToDelete == nodeToDelete->parent->left) {
+                nodeToDelete->parent->left = nullptr;
+            } else {
+                nodeToDelete->parent->right = nullptr;
+            }
+            delete nodeToDelete;
+        }
+    }
+    // if node has one child
+    else if (nodeToDelete->left == nullptr || nodeToDelete->right == nullptr) {
+        AVLTreeNode* child = (nodeToDelete->left != nullptr) ? nodeToDelete->left : nodeToDelete->right;
+        if (nodeToDelete->parent == nullptr) { // node = root
+            root = child;
+            root->parent = nullptr;
+        } else {
+            if (nodeToDelete == nodeToDelete->parent->left) {
+                nodeToDelete->parent->left = child;
+            } else {
+                nodeToDelete->parent->right = child;
+            }
+            child->parent = nodeToDelete->parent;
+            delete nodeToDelete;
+        }
+    }
+    // if node has 2 children
+    else {
+        AVLTreeNode* predecessor = findMax(nodeToDelete->left); // find predecessor
+        int predecessorKey = predecessor->key;
+        Delete(predecessorKey); // recursively delete predecessor
+        nodeToDelete->key = predecessorKey; // copy predecessor key to node
+    }
+
+    // rebalance tree from the parent of the deleted node up to the root
+    AVLTreeNode* current = nodeToDelete->parent;
+    while (current != nullptr) {
+        // Perform rotations and update balance factors as necessary
+        // This part is complex and depends on the specific AVL tree implementation
+        current = current->parent;
+    }
+}
+
+AVLTreeNode* AVL_Tree::findMax(AVLTreeNode* node) {
+    if (node == nullptr) {
+        return nullptr; // return nullptr is empty
+    }
+    // go down to largest value (rightmost)
+    while (node->right != nullptr) {
+        node = node->right;
+    }
+    return node; 
 }
